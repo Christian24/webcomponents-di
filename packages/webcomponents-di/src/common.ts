@@ -1,0 +1,1 @@
+export type DependenciesMap = Map<string, PropertyKey>;
