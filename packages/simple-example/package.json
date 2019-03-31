@@ -2,19 +2,21 @@
   "name": "simple-example",
   "version": "1.0.0",
   "license": "MIT",
+  "private": true,
   "scripts": {
-    "prebuild": "rm -rf dist",
+    "prebuild": "rimraf dist",
     "build": "npx rollup --config",
     "postbuild": "cp index.html dist/index.html",
     "start": "npm run build && cd dist && lite-server ."
   },
   "devDependencies": {
     "lite-server": "^2.4.0",
+    "rimraf": "^2.6.3",
     "rollup": "^1.7.4",
+    "rollup-plugin-node-resolve": "4.0.1",
     "rollup-plugin-typescript": "^1.0.1",
     "tslib": "^1.9.3",
-    "typescript": "3.4.1",
-    "rollup-plugin-node-resolve": "4.0.1"
+    "typescript": "3.4.1"
   },
   "dependencies": {
     "lit-element": "^2.1.0",
