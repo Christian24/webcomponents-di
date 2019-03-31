@@ -1,18 +1,34 @@
-export interface WebComponent extends HTMLElement {
-    connectedCallback?(): void;
+import {DependenciesMap, optionsType} from './common';
 
-    disconnectedCallback?(): void;
+export interface WebComponent extends HTMLElement {
+    connectedCallback(): void;
+
+    disconnectedCallback(): void;
+}
+
+export interface BasicDIComponent extends WebComponent {
+    requestInstance(key: string, options?: optionsType): unknown | null;
 }
 
 interface RequestDependencyEventDetail {
     key: string;
+    options?: optionsType;
     provider?: () => unknown;
 }
 
+export interface AdvancedDIWebComponentConstructor extends BasicDIComponent {
+    _dependenciesMap?: DependenciesMap;
+
+    _ensureDependenciesExist?(): void;
+
+    createDependency(key: string, value: PropertyKey): void;
+}
+
 export type Constructor<T = WebComponent> = new (...args: any[]) => T;
+export type BasicConstructor<T = BasicDIComponent> = new (...args: any[]) => T;
 
 const requestEventName: string = 'WEBCOMPONENTS-DI: REQUEST';
-type ProvidersMap = Map<string, () => unknown>;
+
 
 /**
  * Allows providing dependecies to other components
@@ -20,55 +36,57 @@ type ProvidersMap = Map<string, () => unknown>;
  */
 export function provideDI<TBase extends Constructor>(base: TBase) {
     return class extends base {
-        static providersMap?: ProvidersMap;
 
-        static _ensureProviders() {
-
-            if (this.providersMap === undefined) {
-                this.providersMap = new Map();
-                const superDependencies: ProvidersMap = Object.getPrototypeOf(this).providersMap;
-                if (superDependencies !== undefined) {
-                    superDependencies.forEach(
-                        (v: () => unknown, k: string) =>
-                            this.providersMap!.set(k, v));
-                }
-            }
-        }
-
-         static addProvider(key: string, value: unknown): void {
-            this.constructor._ensureProviders();
-
-             this.constructor.providersMap!.set(key, () => value);
-        }
 
         /**
          * Looks for the requested dependency
          * @param eventTarget
          */
-        handleRequest(eventTarget: Event): void {
-            const providersMap: ProvidersMap= this.constructor.providersMap;
+        handleRequestEvent(eventTarget: Event): void {
+
             const event: CustomEvent<RequestDependencyEventDetail> = <CustomEvent<RequestDependencyEventDetail>>eventTarget;
+            console.log(event);
+            // Get information about the requested dependency
             const detail: RequestDependencyEventDetail = event.detail;
-            if (providersMap !== undefined && providersMap.has(detail.key)) {
-                event.detail.provider = <() => unknown>providersMap.get(detail.key);
+            // Try to resolve it
+            const dependency: null | unknown = this.resolveDependency(detail.key, detail.options);
+            if (dependency !== null) {
+                // We did find the requested dependency let's pack it and send it back
+                event.detail.provider = () => dependency;
+                // Let the requester know we resolved the dependency
                 event.preventDefault();
+                // Stop this from bubbling up as we have resolved it
                 event.stopPropagation();
             }
         }
+
+
+        /**
+         * This is the actual part where you should check if you have the requested dependency and return it
+         * @param key the name of the requested dependency
+         * @param options the optional options
+         */
+        // @ts-ignore
+        resolveDependency(key: string, options?: unknown): unknown | null {
+            return null;
+        }
+
 
         connectedCallback() {
             if (super.connectedCallback !== undefined) {
                 super.connectedCallback();
             }
-            this.constructor._ensureProviders();
-            this.addEventListener(requestEventName, this.handleRequest.bind(this));
+
+            this.addEventListener(requestEventName, this.handleRequestEvent.bind(this));
+
         }
 
         disconnectedCallback() {
             if (super.disconnectedCallback !== undefined) {
                 super.disconnectedCallback();
             }
-            this.removeEventListener(requestEventName, this.handleRequest.bind(this));
+
+            this.removeEventListener(requestEventName, this.handleRequestEvent.bind(this));
         }
     };
 }
@@ -78,11 +96,16 @@ export function provideDI<TBase extends Constructor>(base: TBase) {
  * @param base
  */
 export function requestDI<TBase extends Constructor>(base: TBase) {
-    return class extends base {
-
-        __requestInstance(key: string): unknown | null {
+    return class extends base implements BasicDIComponent {
+        /**
+         * Request a dependency from a component up the tree
+         * @param key the name of the dependency to request
+         * @param options an optional object of options you want the providing component to know, for example if you want a reference to a singleton or a new instance
+         * @return the instance of the requested instance or null if none was found
+         */
+        requestInstance(key: string, options?: unknown): unknown | null {
             let event = new CustomEvent<RequestDependencyEventDetail>(requestEventName, {
-                detail: {key},
+                detail: {key, options},
                 bubbles: true,
                 cancelable: true,
                 composed: true
@@ -101,3 +124,70 @@ export function requestDI<TBase extends Constructor>(base: TBase) {
 
     };
 }
+
+/**
+ * Use this on a CustomElement to allow it to receive Dependencies on connectedCallback
+ * Dependencies can be created with createDependency or the inject decorator
+ * @param target
+ */
+export function enableDI<T extends BasicConstructor>(target: T) {
+
+    return class extends target {
+        static _dependenciesMap?: DependenciesMap;
+
+        static _ensureDependenciesExist(): void {
+            if (this._dependenciesMap === undefined) {
+                this._dependenciesMap = new Map();
+                const superDependencies: DependenciesMap = Object.getPrototypeOf(this)._dependenciesMap;
+                if (superDependencies !== undefined) {
+                    superDependencies.forEach(
+                        (v: PropertyKey, k: string) =>
+                            this._dependenciesMap!.set(k, v));
+                }
+            }
+        }
+
+        /**
+         * Creates a new dependency
+         * @param key the name of the dependency
+         * @param value the value that will be injected
+         */
+        static createDependency(key: string, value: PropertyKey) {
+            this._ensureDependenciesExist();
+            this._dependenciesMap!.set(key, value);
+        }
+
+        connectedCallback() {
+            if (super.connectedCallback !== undefined) {
+                super.connectedCallback();
+            }
+            const constructor = <AdvancedDIWebComponentConstructor><unknown>this.constructor;
+            if (constructor._ensureDependenciesExist !== undefined) {
+                constructor._ensureDependenciesExist();
+            } else {
+                throw new Error('createDependency not found, did you forget to add @enableDI to your component?')
+            }
+
+            if (constructor._dependenciesMap !== undefined) {
+
+                constructor._dependenciesMap.forEach((value: PropertyKey, key: string) => {
+                    console.log(`key: ${key} value: ${value.toString()}`);
+                    console.log(this.requestInstance)
+                    // @ts-ignore
+                    this[value.toString()] = this.requestInstance(key);
+                });
+            }
+        }
+    };
+}
+
+/**
+ * Adds the full functionality of receiving dependencies with decorators and all
+ * @param target
+ */
+export function addDI(target: Constructor) {
+    return enableDI(requestDI(target));
+}
+
+
+
