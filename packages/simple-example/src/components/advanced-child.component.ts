@@ -4,7 +4,7 @@ import {addDI} from 'webcomponents-di/src/mixins';
 
 @customElement('advanced-child-component')
 export class AdvancedChildComponent extends addDI(LitElement) {
-    @inject('world')
+    @inject('world', {uppercase: true})
     world: string | null = null;
 
 

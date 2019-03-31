@@ -1,4 +1,4 @@
-import {DependenciesMap, optionsType} from './common';
+import {DependenciesMap, DependenciesMapValue, optionsType} from './common';
 
 export interface WebComponent extends HTMLElement {
     connectedCallback(): void;
@@ -21,7 +21,7 @@ export interface AdvancedDIWebComponentConstructor extends BasicDIComponent {
 
     _ensureDependenciesExist?(): void;
 
-    createDependency(key: string, value: PropertyKey): void;
+    createDependency(key: string, value: PropertyKey, options?: optionsType): void;
 }
 
 export type Constructor<T = WebComponent> = new (...args: any[]) => T;
@@ -141,7 +141,7 @@ export function enableDI<T extends BasicConstructor>(target: T) {
                 const superDependencies: DependenciesMap = Object.getPrototypeOf(this)._dependenciesMap;
                 if (superDependencies !== undefined) {
                     superDependencies.forEach(
-                        (v: PropertyKey, k: string) =>
+                        (v: DependenciesMapValue, k: string) =>
                             this._dependenciesMap!.set(k, v));
                 }
             }
@@ -152,9 +152,10 @@ export function enableDI<T extends BasicConstructor>(target: T) {
          * @param key the name of the dependency
          * @param value the value that will be injected
          */
-        static createDependency(key: string, value: PropertyKey) {
+        static createDependency(key: string, value: PropertyKey, options?: optionsType) {
             this._ensureDependenciesExist();
-            this._dependenciesMap!.set(key, value);
+            const mapValue: DependenciesMapValue = {property: value, options}
+            this._dependenciesMap!.set(key, mapValue);
         }
 
         connectedCallback() {
@@ -165,16 +166,15 @@ export function enableDI<T extends BasicConstructor>(target: T) {
             if (constructor._ensureDependenciesExist !== undefined) {
                 constructor._ensureDependenciesExist();
             } else {
-                throw new Error('createDependency not found, did you forget to add @enableDI to your component?')
+                throw new Error('createDependency not found, did you forget to extend addDI?')
             }
 
             if (constructor._dependenciesMap !== undefined) {
 
-                constructor._dependenciesMap.forEach((value: PropertyKey, key: string) => {
-                    console.log(`key: ${key} value: ${value.toString()}`);
-                    console.log(this.requestInstance)
+                constructor._dependenciesMap.forEach((value: DependenciesMapValue, key: string) => {
+
                     // @ts-ignore
-                    this[value.toString()] = this.requestInstance(key);
+                    this[value.property.toString()] = this.requestInstance(key, value.options);
                 });
             }
         }

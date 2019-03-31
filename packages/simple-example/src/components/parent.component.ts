@@ -5,8 +5,11 @@ import {provideDI} from 'webcomponents-di/src/mixins';
 export class ParentComponent extends provideDI(LitElement) {
 
     resolveDependency(key: string, options?: unknown): unknown | null {
-        if (key === 'world') {
+        if (key === 'world' && options === undefined) {
             return 'DI (from parent)';
+        }
+        if (key === 'world' && options !== undefined) {
+            return 'DI (from parent)'.toUpperCase();
         }
         return super.resolveDependency(key, options);
     }

@@ -1,2 +1,7 @@
-export type DependenciesMap = Map<string, PropertyKey>;
+export type DependenciesMap = Map<string, DependenciesMapValue>;
 export type optionsType = unknown;
+
+export interface DependenciesMapValue {
+    property: PropertyKey;
+    options?: optionsType;
+}
