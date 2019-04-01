@@ -1,5 +1,5 @@
 import {customElement, html, LitElement, TemplateResult} from 'lit-element';
-import {provideDI} from 'webcomponents-di/src/mixins';
+import {provideDI} from 'webcomponents-di';
 
 @customElement('parent-component')
 export class ParentComponent extends provideDI(LitElement) {

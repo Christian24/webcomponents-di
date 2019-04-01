@@ -1,7 +1,8 @@
 {
   "name": "webcomponents-di",
   "version": "0.0.1",
-  "description": "A dependency injection library for web components ",
+  "description": "A dependency injection library for web components",
+  "main": "main.ts",
   "author": "Christian Siebmanns",
   "license": "MIT",
   "devDependencies": {

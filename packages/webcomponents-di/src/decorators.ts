@@ -8,8 +8,6 @@ import {optionsType} from './common';
  */
 export function inject(key: string, options?: optionsType) {
     return function (target: any, propertyName: string) {
-        console.log(target);
-        console.log(target.constructor);
 
         (target.constructor as unknown as AdvancedDIWebComponentConstructor).createDependency(key, propertyName, options);
     };

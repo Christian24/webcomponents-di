@@ -45,7 +45,6 @@ export function provideDI<TBase extends Constructor>(base: TBase) {
         handleRequestEvent(eventTarget: Event): void {
 
             const event: CustomEvent<RequestDependencyEventDetail> = <CustomEvent<RequestDependencyEventDetail>>eventTarget;
-            console.log(event);
             // Get information about the requested dependency
             const detail: RequestDependencyEventDetail = event.detail;
             // Try to resolve it
@@ -177,6 +176,28 @@ export function enableDI<T extends BasicConstructor>(target: T) {
                     this[value.property.toString()] = this.requestInstance(key, value.options);
                 });
             }
+        }
+
+        requestInstance(key: string, options?: optionsType): unknown | null {
+            const value: unknown | null = super.requestInstance(key, options);
+
+            if (value !== null) {
+                this.receiveDependency(value, key, options);
+            }
+
+            return value;
+        }
+
+        /**
+         * This is called once a dependency was successfully requested
+         * You can do further stuff with the dependency here
+         * @param value the dependency
+         * @param key the key
+         * @param options the optional options
+         */
+        // @ts-ignore
+        receiveDependency(value: unknown, key: string, options?: optionsType) {
+            // This is a stub
         }
     };
 }

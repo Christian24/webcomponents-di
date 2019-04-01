@@ -13,7 +13,4 @@ work with any web component library or framework.
 * Release to npm
 * Right now dependencies can only be provided if the requesting component is a child component. Need to figure out if it
 should be that way
-* `onReceiveCallback`: if the advanced enableDI way is used there is no way for the child to know when a dependency is 
-received. Maybe will add a callback for this. 
-* export library correctly: The src/ in the import path should not be there. 
 * Some general cleanup/improvements  
