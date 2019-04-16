@@ -24,7 +24,7 @@ export interface AdvancedDIWebComponentConstructor extends BasicDIComponent {
     createDependency(key: string, value: PropertyKey, options?: optionsType): void;
 }
 
-export type Constructor<T = WebComponent> = new (...args: any[]) => T;
+export type Constructor<T> = new (...args: any[]) => T;
 export type BasicConstructor<T = BasicDIComponent> = new (...args: any[]) => T;
 
 const requestEventName: string = 'WEBCOMPONENTS-DI: REQUEST';
@@ -34,7 +34,7 @@ const requestEventName: string = 'WEBCOMPONENTS-DI: REQUEST';
  * Allows providing dependecies to other components
  * @param base
  */
-export function provideDI<TBase extends Constructor>(base: TBase) {
+export function provideDI<TBase extends Constructor<WebComponent>>(base: TBase) {
     return class extends base {
 
 
@@ -94,7 +94,7 @@ export function provideDI<TBase extends Constructor>(base: TBase) {
  * Mixin that allows a component to request dependencies
  * @param base
  */
-export function requestDI<TBase extends Constructor>(base: TBase) {
+export function requestDI<TBase extends Constructor<WebComponent>>(base: TBase) {
     return class extends base implements BasicDIComponent {
         /**
          * Request a dependency from a component up the tree
@@ -206,7 +206,7 @@ export function enableDI<T extends BasicConstructor>(target: T) {
  * Adds the full functionality of receiving dependencies with decorators and all
  * @param target
  */
-export function addDI(target: Constructor) {
+export function addDI(target: Constructor<WebComponent>) {
     return enableDI(requestDI(target));
 }
 
