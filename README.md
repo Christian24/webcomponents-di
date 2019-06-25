@@ -64,8 +64,12 @@ export class ParentComponent extends provideDI(LitElement) {
 ```
 Note that here the mixin is called `provideDI` the method is called `resolveDependency`. Again, a more elaborate example
 can be found in the demo project. 
+
+## Contributing
+If you want to contribute you can either open issues to start a discussion on bugs or ideas or you can submit a Pull Request directly. To get the project running you need to have `lerna` installed globally. After checking out the project just run `lerna bootstrap` in its root directory. 
 ## TODO
 * Release to npm
 * Right now dependencies can only be provided if the requesting component is a child component. Need to figure out if it
 should be that way
 * Some general cleanup/improvements  
+* Some more docs
