@@ -6,6 +6,6 @@
   "author": "Christian Siebmanns",
   "license": "MIT",
   "devDependencies": {
-    "typescript": "3.4.1"
+    "typescript": "^3.5.2"
   }
 }

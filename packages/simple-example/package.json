@@ -16,10 +16,10 @@
     "rollup-plugin-node-resolve": "4.0.1",
     "rollup-plugin-typescript": "^1.0.1",
     "tslib": "^1.9.3",
-    "typescript": "3.4.1"
+    "typescript": "^3.5.2"
   },
   "dependencies": {
     "lit-element": "^2.1.0",
-    "webcomponents-di": "^0.0.1"
+    "webcomponents-di": "file:../webcomponents-di/webcomponents-di-0.0.1.tgz"
   }
 }
