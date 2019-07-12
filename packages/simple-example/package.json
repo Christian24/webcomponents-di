@@ -10,16 +10,16 @@
     "start": "npm run build && cd dist && lite-server ."
   },
   "devDependencies": {
-    "lite-server": "^2.4.0",
+    "lite-server": "^2.5.3",
     "rimraf": "^2.6.3",
-    "rollup": "^1.7.4",
+    "rollup": "^1.16.7",
     "rollup-plugin-node-resolve": "4.0.1",
     "rollup-plugin-typescript": "^1.0.1",
-    "tslib": "^1.9.3",
-    "typescript": "^3.5.2"
+    "tslib": "^1.10.0",
+    "typescript": "^3.5.3"
   },
   "dependencies": {
-    "lit-element": "^2.1.0",
-    "webcomponents-di": "file:../webcomponents-di/webcomponents-di-0.0.1.tgz"
+    "lit-element": "^2.2.0",
+    "webcomponents-di": "^0.0.1"
   }
 }

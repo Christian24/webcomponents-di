@@ -3,7 +3,7 @@
     "target": "es2017",
     "module": "es2015",
     "moduleResolution": "node",
-    "lib": ["esnext.array", "esnext", "es2017", "dom"],
+    "lib": ["esnext.array", "esnext", "es2017", "dom", "es2015.iterable", "es2015.collection"],
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
@@ -19,9 +19,9 @@
     "experimentalDecorators": true
   },
   "include": [
-    "packages/webcomponents-di/src/**/*.ts"
+    "src"
   ],
   "exclude": [
-    "../../node_modules"
+    "node_modules"
   ]
 }

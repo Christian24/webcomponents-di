@@ -153,7 +153,7 @@ export function enableDI<T extends BasicConstructor>(target: T) {
          */
         static createDependency(key: string, value: PropertyKey, options?: optionsType) {
             this._ensureDependenciesExist();
-            const mapValue: DependenciesMapValue = {property: value, options}
+            const mapValue: DependenciesMapValue = {property: value, options};
             this._dependenciesMap!.set(key, mapValue);
         }
 
