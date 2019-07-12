@@ -1,11 +1,14 @@
 {
   "name": "webcomponents-di",
-  "version": "0.0.1",
+  "version": "0.0.1-alpha.0",
   "description": "A dependency injection library for web components",
   "main": "dist/index.js",
   "author": "Christian Siebmanns",
   "license": "MIT",
-  "files": ["/dist/", "README.md"],
+  "files": [
+    "/dist/",
+    "README.md"
+  ],
   "scripts": {
     "prepublishOnly": "tsc"
   },
