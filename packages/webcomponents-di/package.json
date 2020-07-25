@@ -11,7 +11,7 @@
   ],
   "scripts": {
     "build": "tsc",
-    "prepublishOnly": "build"
+    "prepublishOnly": "npm run build"
   },
   "devDependencies": {
     "typescript": "~3.9.7"
