@@ -10,9 +10,10 @@
     "README.md"
   ],
   "scripts": {
-    "prepublishOnly": "tsc"
+    "build": "tsc",
+    "prepublishOnly": "build"
   },
   "devDependencies": {
-    "typescript": "^3.5.3"
+    "typescript": "~3.9.7"
   }
 }

@@ -116,8 +116,6 @@ export function requestDI<TBase extends Constructor<WebComponent>>(base: TBase) 
             } else {
                 throw new Error(`no provider found for ${key}`);
             }
-
-            return null;
         }
 
 
