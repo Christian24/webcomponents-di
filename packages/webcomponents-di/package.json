@@ -10,10 +10,11 @@
     "README.md"
   ],
   "scripts": {
-    "build": "tsc",
-    "prepublishOnly": "npm run build"
+    "build": "tsc"
   },
   "devDependencies": {
-    "typescript": "~3.9.7"
-  }
+    "typescript": "~3.9.7",
+    "prettier": "^2.0.5"
+  },
+  "repository": "https://github.com/Christian24/webcomponents-di"
 }

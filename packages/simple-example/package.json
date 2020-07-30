@@ -6,17 +6,17 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "rollup --config",
-    "start": "npm run build && cd dist && lite-server ."
+    "start": "npm run build && cd dist && http-server ."
   },
   "devDependencies": {
-    "lite-server": "^2.5.3",
+    "http-server": "^0.12.3",
     "rimraf": "^3.0.2",
     "rollup": "2.23.0",
     "rollup-plugin-copy": "^3.3.0",
     "rollup-plugin-node-resolve": "5.0.2",
     "rollup-plugin-typescript": "^1.0.1",
     "tslib": "^2.0.0",
-    "typescript": "^3.5.3"
+    "typescript": "^3.9.7"
   },
   "dependencies": {
     "lit-element": "^2.3.0",
